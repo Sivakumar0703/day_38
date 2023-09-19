@@ -1,0 +1,80 @@
+
+1) 
+db.tasks.aggregate([
+            { 
+           $lookup: {
+           from:"topics",
+           localField:"date",
+           foreignField:"date",
+           as:"result"
+           }
+           } ,
+     
+             {$project : {
+               _id:0,
+               submission:0,
+               "result._id":0,
+               "result.date":0
+               }
+               },
+    
+ ])
+
+
+2)
+db.companies.find({date : { $gte : ("2020-10-15"),
+        $lte:("2020-10-31") } } ,
+{_id:0 , candidates:0}
+)
+
+
+3)
+db.companies.aggregate([
+        {$unwind : '$candidates'},
+        
+        { $group : {
+        _id : null,
+        company : {$addToSet : '$compant_name'},
+        candidates : {$addToSet : '$candidates'}
+        } },
+        
+        {$project : {_id:0}}
+        
+        ])
+
+4)
+db.codekata.aggregate([
+    {
+    $lookup : {
+    from:"users",
+    localField:"studentId",
+    foreignField:"_id",
+    as:"student"
+    } } ,
+    
+    {$project : {
+    _id:0,
+    studentId:0,
+    "student._id":0,
+    "student.age":0,
+    "student.gender":0,
+    "student.contact":0
+    } }
+    ])
+
+
+5)
+db.mentor.find({student_count:{$gt:15}})
+
+
+6)
+db.attendance.aggregate([
+ 
+{$unwind : '$absent'},
+
+{ $group : { 
+_id:"$date",
+absent_students : { $push : '$absent'}
+} }
+
+])
